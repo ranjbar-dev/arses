@@ -53,7 +53,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '3.90.0'
-          command: pages project create ranjbar-dev --production-branch=main
+          command: pages project create arses --production-branch=main
 
       # 6. Deploy dist/ to Cloudflare Pages
       - name: Deploy to Cloudflare Pages
@@ -63,4 +63,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: '3.90.0'
-          command: pages deploy dist --project-name=ranjbar-dev --branch=${{ github.ref_name }}
+          command: pages deploy dist --project-name=arses --branch=${{ github.ref_name }}
