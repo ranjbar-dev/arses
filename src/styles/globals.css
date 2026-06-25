@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-deep: #001214;
+  --bg-base: #001f20;
+  --surface-1: #062b2b;
+  --surface-2: #0a3a38;
+  --accent: #5eead4;
+  --accent-bright: #8ff3e2;
+  --accent-deep: #2dd4bf;
+  --on-accent: #001f20;
+  --text-primary: #eaf6f3;
+  --text-secondary: #8fb3ae;
+  --text-faint: #557571;
+  --border: rgba(94, 234, 212, 0.12);
+  --border-strong: rgba(94, 234, 212, 0.28);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+body {
+  font-family: Inter, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-base);
+  overflow-x: hidden;
+}
+
+html[lang='fa'],
+html[dir='rtl'] {
+  font-family: Vazirmatn, sans-serif;
+}
+
+/* Focus rings */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-deep); }
+
+/* Lenis smooth scroll */
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
