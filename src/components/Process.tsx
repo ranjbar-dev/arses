@@ -54,7 +54,7 @@ export default function Process() {
           <div
             ref={lineRef}
             className="absolute inset-0 origin-top bg-accent"
-            style={reduced ? { scaleY: 1 } : { scaleY: 0 }}
+            style={reduced ? { transform: 'scaleY(1)' } : { transform: 'scaleY(0)' }}
           />
         </div>
 
