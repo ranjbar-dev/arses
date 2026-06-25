@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useI18n } from '../lib/i18n/context'
+import { getLenis } from '../lib/lenis'
 
 const TELEGRAM = 'https://t.me/[TODO-handle]'
 
@@ -26,15 +27,24 @@ export default function Header() {
 
       {/* Nav */}
       <nav className="ms-auto flex items-center gap-1 sm:gap-2">
-        {(['work', 'process', 'contact'] as const).map((key) => (
-          <a
-            key={key}
-            href={`#${key}`}
-            className="hidden px-3 py-1.5 text-sm text-secondary transition-colors hover:text-accent sm:block"
-          >
-            {t.nav[key]}
-          </a>
-        ))}
+        {(['work', 'process', 'contact'] as const).map((key) => {
+          const href = `#${key}`
+          return (
+            <a
+              key={key}
+              href={href}
+              onClick={(e) => {
+                const lenis = getLenis()
+                if (!lenis) return
+                e.preventDefault()
+                lenis.scrollTo(href)
+              }}
+              className="hidden px-3 py-1.5 text-sm text-secondary transition-colors hover:text-accent sm:block"
+            >
+              {t.nav[key]}
+            </a>
+          )
+        })}
 
         {/* Lang toggle */}
         <button

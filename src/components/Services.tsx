@@ -40,9 +40,9 @@ export default function Services() {
         {/* Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {t.services.items.map((item, i) => (
-            <RevealChild key={i}>
+            <RevealChild key={i} className="h-full">
               <motion.div
-                className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-surface-1 p-8 transition-colors duration-300 hover:border-[var(--border-strong)] hover:bg-surface-2"
+                className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-surface-1 p-8 transition-colors duration-300 hover:border-[var(--border-strong)] hover:bg-surface-2 h-full"
                 whileHover={reduced ? {} : { y: -4 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >

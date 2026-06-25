@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ease, useReducedMotion } from '../lib/motion'
 import { useI18n } from '../lib/i18n/context'
+import { getLenis } from '../lib/lenis'
 import Button from './ui/Button'
 
 const TELEGRAM = 'https://t.me/[TODO-handle]'
@@ -39,42 +40,95 @@ export default function Hero() {
     )
   }, { scope: svgRef })
 
-  // Ambient fog canvas
+  // Ambient fog canvas + constellation particles
   useEffect(() => {
     const canvas = fogRef.current
     if (!canvas || reduced) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    const PARTICLE_COUNT = 30
+    const CONNECTION_DIST = 120
+    const ACCENT = '94,234,212'
+
+    type Particle = { x: number; y: number; vx: number; vy: number; r: number; opacity: number; opacityDir: number }
+
+    let particles: Particle[] = []
     let frame: number
-    let t = 0
+    let tick = 0
+
+    const init = () => {
+      const w = canvas.offsetWidth
+      const h = canvas.offsetHeight
+      particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: 1 + Math.random() * 1.5,
+        opacity: Math.random() * 0.5 + 0.1,
+        opacityDir: Math.random() > 0.5 ? 1 : -1,
+      }))
+    }
 
     const draw = () => {
       canvas.width = canvas.offsetWidth
       canvas.height = canvas.offsetHeight
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      const w = canvas.width
+      const h = canvas.height
+      ctx.clearRect(0, 0, w, h)
 
-      const cx = canvas.width / 2
-      const cy = canvas.height * 0.4
-
+      // Ambient fog gradient (original)
+      const cx = w / 2
+      const cy = h * 0.4
       const g = ctx.createRadialGradient(
-        cx + Math.sin(t * 0.3) * 60,
-        cy + Math.cos(t * 0.2) * 40,
+        cx + Math.sin(tick * 0.3) * 60,
+        cy + Math.cos(tick * 0.2) * 40,
         0,
-        cx,
-        cy,
-        canvas.width * 0.7
+        cx, cy,
+        w * 0.7
       )
       g.addColorStop(0, 'rgba(94,234,212,0.06)')
       g.addColorStop(0.5, 'rgba(0,31,32,0.02)')
       g.addColorStop(1, 'rgba(0,31,32,0)')
-
       ctx.fillStyle = g
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      t += 0.01
+      ctx.fillRect(0, 0, w, h)
+
+      // Update + draw particles
+      for (const p of particles) {
+        p.x = (p.x + p.vx + w) % w
+        p.y = (p.y + p.vy + h) % h
+        p.opacity += p.opacityDir * 0.003
+        if (p.opacity >= 0.6 || p.opacity <= 0.05) p.opacityDir *= -1
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${ACCENT},${p.opacity})`
+        ctx.fill()
+      }
+
+      // Connection lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j]
+          const dist = Math.hypot(a.x - b.x, a.y - b.y)
+          if (dist < CONNECTION_DIST) {
+            const lineOpacity = (1 - dist / CONNECTION_DIST) * 0.15
+            ctx.beginPath()
+            ctx.moveTo(a.x, a.y)
+            ctx.lineTo(b.x, b.y)
+            ctx.strokeStyle = `rgba(${ACCENT},${lineOpacity})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      tick += 0.01
       frame = requestAnimationFrame(draw)
     }
 
+    init()
     draw()
     return () => cancelAnimationFrame(frame)
   }, [reduced])
@@ -142,7 +196,16 @@ export default function Hero() {
           <Button href={TELEGRAM} target="_blank" rel="noopener noreferrer" magnetic>
             {t.hero.cta}
           </Button>
-          <Button href="#work" variant="ghost">
+          <Button
+            href="#work"
+            variant="ghost"
+            onClick={(e) => {
+              const lenis = getLenis()
+              if (!lenis) return
+              e.preventDefault()
+              lenis.scrollTo('#work')
+            }}
+          >
             {t.hero.ctaSecondary}
           </Button>
         </motion.div>

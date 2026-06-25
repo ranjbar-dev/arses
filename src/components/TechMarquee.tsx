@@ -41,7 +41,7 @@ export default function TechMarquee() {
           </div>
         ) : (
           <motion.div
-            className="flex gap-4 whitespace-nowrap px-4"
+            className="flex gap-4 whitespace-nowrap"
             animate={{ x: dir < 0 ? [0, '-50%'] : ['-50%', 0] }}
             transition={{ duration, ease: 'linear', repeat: Infinity }}
           >
